@@ -23,7 +23,7 @@
 
                                             <div class="input-group input-group-outline @if(strlen($name?? '') > 0) is-filled @endif">
                                                 <label class="form-label">Name</label>
-                                                <input wire:model.live="name" type="text" class="form-control" 
+                                                <input wire:model.live="name" type="text" class="form-control"
                                                 >
                                             </div>
                                             @error('name')
@@ -35,6 +35,15 @@
                                                 <input wire:model.live="email" type="email"  class="form-control"
                                                      >
                                             </div>
+                                            @error('phone')
+                                            <p class='text-danger inputerror'>{{ $message }} </p>
+                                            @enderror
+
+                                            <div class="input-group input-group-outline mt-3 @if(strlen($phone ?? '') > 0) is-filled @endif">
+                                                <label class="form-label">Phone Number</label>
+                                                <input wire:model.live="phone" type="text"  class="form-control"
+                                                >
+                                            </div>
                                             @error('email')
                                             <p class='text-danger inputerror'>{{ $message }} </p>
                                             @enderror
@@ -42,6 +51,13 @@
                                             <div class="input-group input-group-outline mt-3 @if(strlen($password ?? '') > 0) is-filled @endif">
                                                 <label class="form-label">Password</label>
                                                 <input wire:model.live="password" type="password" class="form-control" >
+                                            </div>
+                                            @error('password_confirmation')
+                                            <p class='text-danger inputerror'>{{ $message }} </p>
+                                            @enderror
+                                            <div class="input-group input-group-outline mt-3 @if(strlen($password_confirmation ?? '') > 0) is-filled @endif">
+                                                <label class="form-label">Password Confirm</label>
+                                                <input wire:model.live="password_confirmation" type="password" class="form-control" >
                                             </div>
                                             @error('password')
                                             <p class='text-danger inputerror'>{{ $message }} </p>

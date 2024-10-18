@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Auth;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -22,24 +24,35 @@ class Login extends Component
         return view('livewire.auth.login');
     }
 
-    public function mount() {
-      
-        $this->fill(['email' => 'admin@material.com', 'password' => 'secret']);    
-    }
-    
-    public function store()
+    public function login()
     {
         $attributes = $this->validate();
 
-        if (! auth()->attempt($attributes)) {
+        if (! $attributes)
+        {
             throw ValidationException::withMessages([
                 'email' => 'Your provided credentials could not be verified.'
             ]);
         }
 
-        session()->regenerate();
+        $response = Http::post(config('services.backend.url').'/api/login', [
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
 
-        return redirect('/dashboard');
+        if ($response->successful()) {
+            $data = $response->json();
+            $token = $data['access_token'];
+            $user = $data['user'];
 
+            // Store the token in a secure HTTP-only cookie
+            cookie()->queue('api_token', $token, 60 * 24 * 30); // 30 days
+            cookie()->queue('user', json_encode($user), 60 * 24 * 30); // 30 days
+
+
+            return redirect()->intended('/dashboard');
+        } else {
+            $this->addError('login', 'Invalid credentials');
+        }
     }
 }
